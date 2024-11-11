@@ -1,0 +1,8 @@
+{
+  "short_name": "Photo Grid",
+  "name": "Photo Grid",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
