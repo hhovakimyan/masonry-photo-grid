@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { pexelsPhotoService } from '../../../../api';
+import { pexelsPhotoService } from 'api';
 
 const PhotosGrid = () => {
   useEffect(() => {

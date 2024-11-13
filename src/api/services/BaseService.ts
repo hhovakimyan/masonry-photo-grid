@@ -1,5 +1,5 @@
 import {AxiosError} from "axios";
-import ServiceError from "../models/ServiceError";
+import ServiceError from "api/models/ServiceError";
 
 abstract class BaseService {
     getServiceError(error: AxiosError) {

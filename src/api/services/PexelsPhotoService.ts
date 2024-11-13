@@ -1,9 +1,9 @@
-import IPexelsPhotoService from "../interfaces/IPhotoService";
-import {SearchPhotosQueryParams, SearchPhotosResponse} from "../models/PexelPhotos";
-import {pexelsHttpClient} from "../client";
+import IPexelsPhotoService from "api/interfaces/IPhotoService";
+import {SearchPhotosQueryParams, SearchPhotosResponse} from "api/models/PexelPhotos";
+import {pexelsHttpClient} from "api/client";
 import {AxiosError} from "axios";
 import BaseService from "./BaseService";
-import ServiceError from "../models/ServiceError";
+import ServiceError from "api/models/ServiceError";
 
 const DEFAULT_PHOTO_SEARCH_QUERY = 'nature';
 const DEFAULT_PHOTO_SIZE = 'small';

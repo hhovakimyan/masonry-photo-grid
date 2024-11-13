@@ -1,4 +1,4 @@
-import {PhotoApiItem, PhotoSize} from "../../types/photos";
+import {PhotoApiItem, PhotoSize} from "types/photos";
 import {QueryParams} from "./QueryParams";
 
 const MIN_PAGINATION_PAGE = 1;
