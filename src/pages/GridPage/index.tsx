@@ -1,16 +1,13 @@
-import {useEffect} from "react";
-import {pexelsPhotoService} from "../../api";
+import { StyledPageTitle, StyledWrapper } from './styles';
+import PhotosGrid from './components/PhotosGrid';
 
 const GridPage = () => {
-    useEffect(() => {
-        pexelsPhotoService.listPhotos(1, 10);
-    }, []);
-
     return (
-        <div className="gridPage">
-            Grid Page
-        </div>
-    )
+        <StyledWrapper>
+            <StyledPageTitle>Welcome to Pexels Photo Grid</StyledPageTitle>
+            <PhotosGrid />
+        </StyledWrapper>
+    );
 }
 
 export default GridPage;
