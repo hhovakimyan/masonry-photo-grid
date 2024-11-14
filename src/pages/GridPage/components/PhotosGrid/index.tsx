@@ -2,9 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { pexelsPhotoService } from 'api';
 import { useErrorBoundary } from 'react-error-boundary';
 import { PhotoUiItem } from 'types/photos';
-import PhotoGridItem from '../PhotoGridItem';
 import LoadingSpinner from 'components/LoadingSpinner';
-import { StyledLoadingWrapper, StyledPhotosGrid, StyledPhotosGridWrapper } from './styles';
+import { StyledLoadingWrapper, StyledPhotosGridWrapper } from './styles';
+import { filterPhotoApiProps } from 'utils/pexels';
+import PhotosGridList from '../PhotosGridList';
 
 const PHOTOS_COUNT_PER_PAGE = 24;
 
@@ -24,13 +25,14 @@ const PhotosGrid = () => {
     pexelsPhotoService
       .listPhotos(page + 1, PHOTOS_COUNT_PER_PAGE)
       .then((response) => {
+        const photoUiItems = filterPhotoApiProps(response.photos);
         if (page === 0) {
-          setPhotos(response.photos);
+          setPhotos(photoUiItems);
         } else {
           setPhotos((prev) => {
             return [
               ...prev,
-              ...response.photos,
+              ...photoUiItems,
             ]
           });
         }
@@ -77,23 +79,7 @@ const PhotosGrid = () => {
 
   return (
     <StyledPhotosGridWrapper>
-      <StyledPhotosGrid>
-        {
-          photos.map((photo, index) => {
-            if (index === photos.length - 1) {
-              return (
-                <div ref={lastPhotoItemRef} key={`photo-${photo.id}`}>
-                  <PhotoGridItem data={photo} />
-                </div>
-              )
-            }
-
-            return (
-              <PhotoGridItem key={`photo-${photo.id}`} data={photo} />
-            )
-          })
-        }
-      </StyledPhotosGrid>
+      <PhotosGridList photos={photos} lastPhotoItemRef={lastPhotoItemRef} />
       {
         isPhotosListLoading &&
           <StyledLoadingWrapper>

@@ -22,4 +22,7 @@ export type PhotoApiItem = {
 
 export type PhotoSize = 'small' | 'medium' | 'large';
 
-export type PhotoUiItem = Omit<PhotoApiItem, "photographer_id" | "photographer_url" | "url">;
+export type PhotoUiItem = Omit<PhotoApiItem, "photographer_id" | "photographer_url" | "url" | "src" | "avg_color"> & {
+    src: string;
+    avgColor: string;
+};

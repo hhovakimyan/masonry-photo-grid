@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 
-import { PhotoUiItem } from 'types/photos';
 import { StyledImg, StyledPhotoGridItem } from './styles';
 import ImagePlaceholder from 'pages/GridPage/components/ImagePlaceholder';
 import { calculateImageNewHeightWithRatio } from 'utils/images';
 
 type Props = {
-  data: PhotoUiItem;
+  src: string;
+  alt: string;
+  avgColor: string;
+  width: number;
+  height: number;
 }
 
 type GridImageSizeProps = {
@@ -48,20 +51,18 @@ const gridImageSizes: GridImageSizeProps[] = [
 
 const PHOTO_GRID_ITEM_WIDTH = 400; // TODO revert this when implementing responsibility
 
-const PhotoGridItem: React.FC<Props> = ({data}) => {
-  const { src: { original }, alt, avg_color, width, height } = data;
-
+const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => {
   const [isLoadingImage, setIsLoadingImage] = useState<boolean>(true);
 
   const imgSrcSet = srcSetWidths.map((width) => {
-    return `${original}?auto=compress&cs=tinysrgb&w=${width} ${width}w`;
+    return `${src}?auto=compress&cs=tinysrgb&w=${width} ${width}w`;
   });
 
   const imgSizes = gridImageSizes.map(({maxWidth, imageWidth}) => {
     return `${maxWidth && `(max-width: ${maxWidth}px )`} ${imageWidth}`;
   })
 
-  const defaultImgSrc = `${original}?auto=compress&cs=tinysrgb&w=500`;
+  const defaultImgSrc = `${src}?auto=compress&cs=tinysrgb&w=500`;
 
   const newImgHeight = calculateImageNewHeightWithRatio(
     PHOTO_GRID_ITEM_WIDTH,
@@ -72,7 +73,7 @@ const PhotoGridItem: React.FC<Props> = ({data}) => {
   return (
     <StyledPhotoGridItem
       style={{width: PHOTO_GRID_ITEM_WIDTH, height: newImgHeight}}>
-      {isLoadingImage && <ImagePlaceholder backgroundColor={avg_color} />}
+      {isLoadingImage && <ImagePlaceholder backgroundColor={avgColor} />}
       <StyledImg
         srcSet={imgSrcSet.join(', ')}
         sizes={imgSizes.join(', ')}
@@ -87,4 +88,4 @@ const PhotoGridItem: React.FC<Props> = ({data}) => {
   )
 }
 
-export default PhotoGridItem;
+export default React.memo(PhotoGridItem);
