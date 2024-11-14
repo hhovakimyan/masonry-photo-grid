@@ -11,9 +11,9 @@ export const StyledErrorBoundaryWrapper = styled.div`
 `;
 
 export const StyledErrorBoundaryTitle = styled.h2`
-    font-size: 20px;
+    font-size: 1.25rem;
 `;
 
 export const StyledErrorBoundaryMessage = styled.p`
-    font-size: 16px;
+    font-size: 1rem;
 `;
