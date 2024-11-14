@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { pexelsPhotoService } from 'api';
 import { useErrorBoundary } from 'react-error-boundary';
 import { PhotoUiItem } from 'types/photos';
@@ -6,21 +6,19 @@ import PhotoGridItem from '../PhotoGridItem';
 import LoadingSpinner from 'components/LoadingSpinner';
 import { StyledLoadingWrapper, StyledPhotosGrid, StyledPhotosGridWrapper } from './styles';
 
-const PHOTOS_COUNT_PER_PAGE = 10;
+const PHOTOS_COUNT_PER_PAGE = 24;
 
 const PhotosGrid = () => {
   const { showBoundary } = useErrorBoundary();
 
   const [photos, setPhotos] = useState<PhotoUiItem[]>([]);
   const [page, setPage] = useState<number>(0);
-  const [totalPhotosCount, setTotalPhotosCount] = useState<number>(0);
-  const [isPhotosListLoading, setIsPhotosListLoading] = useState<boolean>(false);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [isPhotosListLoading, setIsPhotosListLoading] = useState<boolean>(true);
+
+  const lastPhotoItemRef = useRef<HTMLDivElement>(null);
 
   const loadPhotoItems = useCallback(() => {
-    if (isPhotosListLoading) {
-      return;
-    }
-
     setIsPhotosListLoading(true);
 
     pexelsPhotoService
@@ -38,7 +36,7 @@ const PhotosGrid = () => {
         }
 
         setPage(response.page);
-        setTotalPhotosCount(response.total_results);
+        setHasNextPage(!!response.next_page);
       })
       .catch((error) => {
         showBoundary(error);
@@ -46,36 +44,53 @@ const PhotosGrid = () => {
       .finally(() => {
         setIsPhotosListLoading(false);
       })
-  }, [isPhotosListLoading, page]);
-
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + window.scrollY >= document.body.scrollHeight - 50 &&
-      !isPhotosListLoading &&
-      photos.length < totalPhotosCount
-    ) {
-      loadPhotoItems();
-    }
-  }, [isPhotosListLoading, loadPhotoItems, totalPhotosCount, photos.length]);
+  }, [page]);
 
   useEffect(() => {
     loadPhotoItems();
   }, []);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    if (!lastPhotoItemRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isPhotosListLoading && hasNextPage) {
+          loadPhotoItems();
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+
+    observer.observe(lastPhotoItemRef.current);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     }
-  }, [handleScroll]);
+  }, [isPhotosListLoading, hasNextPage, loadPhotoItems]);
 
   return (
     <StyledPhotosGridWrapper>
       <StyledPhotosGrid>
         {
-          photos.map((photo) => {
-            return <PhotoGridItem key={`photo-${photo.id}`} data={photo} />
+          photos.map((photo, index) => {
+            if (index === photos.length - 1) {
+              return (
+                <div ref={lastPhotoItemRef} key={`photo-${photo.id}`}>
+                  <PhotoGridItem data={photo} />
+                </div>
+              )
+            }
+
+            return (
+              <PhotoGridItem key={`photo-${photo.id}`} data={photo} />
+            )
           })
         }
       </StyledPhotosGrid>

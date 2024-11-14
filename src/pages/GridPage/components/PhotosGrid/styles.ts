@@ -16,5 +16,6 @@ export const StyledPhotosGrid = styled.div`
 `;
 
 export const StyledLoadingWrapper = styled.div`
+    margin-top: 1.25rem;
     text-align: center;
 `
