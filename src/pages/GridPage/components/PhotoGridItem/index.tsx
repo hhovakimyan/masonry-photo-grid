@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { StyledImg, StyledPhotoGridItem } from './styles';
 import ImagePlaceholder from 'pages/GridPage/components/ImagePlaceholder';
@@ -52,7 +52,36 @@ const gridImageSizes: GridImageSizeProps[] = [
 const PHOTO_GRID_ITEM_WIDTH = 400; // TODO revert this when implementing responsibility
 
 const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => {
-  const [isLoadingImage, setIsLoadingImage] = useState<boolean>(true);
+  const [isLoadingImage, setIsLoadingImage] = useState<boolean>(false);
+  const [isPhotoInViewPort, setIsPhotoInViewPort] = useState<boolean>(false);
+
+  const gridItemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!gridItemRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setIsPhotoInViewPort(true);
+          setIsLoadingImage(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(gridItemRef.current);
+
+    return () => {
+      observer.disconnect();
+    }
+  }, []);
 
   const imgSrcSet = srcSetWidths.map((width) => {
     return `${src}?auto=compress&cs=tinysrgb&w=${width} ${width}w`;
@@ -72,18 +101,26 @@ const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => 
 
   return (
     <StyledPhotoGridItem
+      ref={gridItemRef}
       style={{width: PHOTO_GRID_ITEM_WIDTH, height: newImgHeight}}>
-      {isLoadingImage && <ImagePlaceholder backgroundColor={avgColor} />}
-      <StyledImg
-        srcSet={imgSrcSet.join(', ')}
-        sizes={imgSizes.join(', ')}
-        src={defaultImgSrc}
-        alt={alt}
-        loading="lazy"
-        onLoad={() => {
-          setIsLoadingImage(false);
-        }}
-      />
+      {
+        isPhotoInViewPort ? (
+          <>
+            {isLoadingImage && <ImagePlaceholder backgroundColor={avgColor} />}
+            <StyledImg
+              srcSet={imgSrcSet.join(', ')}
+              sizes={imgSizes.join(', ')}
+              src={defaultImgSrc}
+              alt={alt}
+              onLoad={() => {
+                setIsLoadingImage(false);
+              }}
+            />
+          </>
+        ) : (
+          <ImagePlaceholder backgroundColor={avgColor} />
+        )
+      }
     </StyledPhotoGridItem>
   )
 }
