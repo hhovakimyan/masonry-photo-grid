@@ -1,58 +1,36 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { StyledImg, StyledPhotoGridItem } from './styles';
-import ImagePlaceholder from 'pages/GridPage/components/ImagePlaceholder';
+import { StyledPhotoGridItem } from './styles';
+import ImagePlaceholder from 'components/ImagePlaceholder';
 import { calculateImageNewHeightWithRatio } from 'utils/images';
+import { useNavigate } from 'react-router-dom';
+import GridImage from 'components/GridImage';
 
 type Props = {
+  id: string;
   src: string;
   alt: string;
-  avgColor: string;
+  placeholderColor: string;
   width: number;
   height: number;
+  photographer: string;
+  pageUrl: string;
 }
-
-type GridImageSizeProps = {
-  maxWidth?: number;
-  imageWidth?: string;
-}
-
-const srcSetWidths: number[] = [
-  150,
-  300,
-  400,
-  600,
-  800,
-  1200,
-  1600,
-];
-
-const gridImageSizes: GridImageSizeProps[] = [
-  {
-    maxWidth: 650,
-    imageWidth: 'calc((100vw - 45px) / 2)',
-  },
-  {
-    maxWidth: 900,
-    imageWidth: 'calc((100vw - 45px) / 2)',
-  },
-  {
-    maxWidth: 1440,
-    imageWidth: 'calc((100vw - 100px) / 3)',
-  },
-  {
-    maxWidth: 1600,
-    imageWidth: 'calc((100vw - 200px) / 3)',
-  },
-  {
-    imageWidth: 'calc((1600px - 200px) / 3)',
-  }
-];
 
 const PHOTO_GRID_ITEM_WIDTH = 400; // TODO revert this when implementing responsibility
 
-const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => {
-  const [isLoadingImage, setIsLoadingImage] = useState<boolean>(false);
+const PhotoGridItem: React.FC<Props> = ({
+  id,
+  src,
+  alt,
+  placeholderColor,
+  width,
+  height,
+  photographer,
+  pageUrl,
+}) => {
+  const navigate = useNavigate();
+
   const [isPhotoInViewPort, setIsPhotoInViewPort] = useState<boolean>(false);
 
   const gridItemRef = useRef<HTMLDivElement>(null);
@@ -67,7 +45,6 @@ const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => 
         const entry = entries[0];
         if (entry.isIntersecting) {
           setIsPhotoInViewPort(true);
-          setIsLoadingImage(true);
           observer.disconnect();
         }
       },
@@ -83,42 +60,38 @@ const PhotoGridItem: React.FC<Props> = ({src, alt, avgColor, width, height}) => 
     }
   }, []);
 
-  const imgSrcSet = srcSetWidths.map((width) => {
-    return `${src}?auto=compress&cs=tinysrgb&w=${width} ${width}w`;
-  });
-
-  const imgSizes = gridImageSizes.map(({maxWidth, imageWidth}) => {
-    return `${maxWidth && `(max-width: ${maxWidth}px )`} ${imageWidth}`;
-  })
-
-  const defaultImgSrc = `${src}?auto=compress&cs=tinysrgb&w=500`;
-
   const newImgHeight = calculateImageNewHeightWithRatio(
     PHOTO_GRID_ITEM_WIDTH,
     width,
     height
   );
 
+  const onGridItemClick = useCallback(() => {
+    navigate(
+      `/details/${id}`,
+      {
+        state: {
+          src,
+          alt,
+          placeholderColor,
+          photographer,
+          pageUrl,
+        }
+      }
+    );
+  }, [id, src, alt, placeholderColor, photographer, pageUrl]);
+
   return (
     <StyledPhotoGridItem
       ref={gridItemRef}
-      style={{width: PHOTO_GRID_ITEM_WIDTH, height: newImgHeight}}>
+      style={{width: PHOTO_GRID_ITEM_WIDTH, height: newImgHeight}}
+      onClick={onGridItemClick}
+    >
       {
         isPhotoInViewPort ? (
-          <>
-            {isLoadingImage && <ImagePlaceholder backgroundColor={avgColor} />}
-            <StyledImg
-              srcSet={imgSrcSet.join(', ')}
-              sizes={imgSizes.join(', ')}
-              src={defaultImgSrc}
-              alt={alt}
-              onLoad={() => {
-                setIsLoadingImage(false);
-              }}
-            />
-          </>
+          <GridImage src={src} alt={alt} placeholderColor={placeholderColor} />
         ) : (
-          <ImagePlaceholder backgroundColor={avgColor} />
+          <ImagePlaceholder backgroundColor={placeholderColor} />
         )
       }
     </StyledPhotoGridItem>

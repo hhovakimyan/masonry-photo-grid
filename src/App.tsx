@@ -8,8 +8,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="" element={<GridPage />} />
-        <Route path="/details/:id" element={<DetailsPage />} />
+        <Route path="/" element={<GridPage />}></Route>
+        <Route path="details/:id" element={<DetailsPage />} />
       </Routes>
     </BrowserRouter>
   );

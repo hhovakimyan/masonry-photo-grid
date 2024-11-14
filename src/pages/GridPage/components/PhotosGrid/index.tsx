@@ -4,7 +4,7 @@ import { useErrorBoundary } from 'react-error-boundary';
 import { PhotoUiItem } from 'types/photos';
 import LoadingSpinner from 'components/LoadingSpinner';
 import { StyledLoadingWrapper, StyledPhotosGridWrapper } from './styles';
-import { filterPhotoApiProps } from 'utils/pexels';
+import { filterPhotoApiListItemProps } from 'utils/pexels';
 import PhotosGridList from '../PhotosGridList';
 
 const PHOTOS_COUNT_PER_PAGE = 24;
@@ -25,7 +25,7 @@ const PhotosGrid = () => {
     pexelsPhotoService
       .listPhotos(page + 1, PHOTOS_COUNT_PER_PAGE)
       .then((response) => {
-        const photoUiItems = filterPhotoApiProps(response.photos);
+        const photoUiItems = filterPhotoApiListItemProps(response.photos);
         if (page === 0) {
           setPhotos(photoUiItems);
         } else {

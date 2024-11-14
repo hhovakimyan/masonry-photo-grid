@@ -20,13 +20,13 @@ class HttpClient {
 
     public async get<T>(
         url: string,
-        queryParams: QueryParams,
-        ResponseModel: ClassConstructor<T>
+        ResponseModel: ClassConstructor<T>,
+        queryParams?: QueryParams,
     ): Promise<T> {
         const response = await this.axiosInstance.get(
             url,
             {
-                params: queryParams.getUrlSearchParams(),
+                params: queryParams?.getUrlSearchParams(),
             }
         );
         const responseData = await response.data;

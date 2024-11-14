@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const StyledWrapper = styled.div`
-    margin: 12.5rem auto;
+    margin: 4.5rem auto;
 `;
 
 export const StyledPageTitle = styled.h1`
