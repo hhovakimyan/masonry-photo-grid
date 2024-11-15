@@ -14,4 +14,4 @@ const ImagePlaceholder: React.FC<Props> = ({backgroundColor}) => {
    );
 }
 
-export default ImagePlaceholder;
+export default React.memo(ImagePlaceholder);

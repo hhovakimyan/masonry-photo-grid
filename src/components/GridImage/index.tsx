@@ -1,5 +1,5 @@
 import ImagePlaceholder from '../ImagePlaceholder';
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { buildSrcSetImageUrl } from 'utils/pexels';
 import { StyledImg } from './styles';
 
@@ -37,6 +37,10 @@ const gridImageSizes: GridImageSizeProps[] = [
   }
 ];
 
+const imgSizes = gridImageSizes.map(({maxWidth, imageWidth}) => {
+  return `${maxWidth && `(max-width: ${maxWidth}px )`} ${imageWidth}`;
+});
+
 type Props = {
   src: string;
   alt: string;
@@ -48,15 +52,17 @@ const DEFAULT_IMAGE_WIDTH = 500;
 const GridImage: React.FC<Props> = ({src, alt, placeholderColor}) => {
   const [isLoadingImage, setIsLoadingImage] = useState<boolean>(true);
 
-  const imgSrcSet = srcSetWidths.map(
-    (width) => buildSrcSetImageUrl(src, width)
-  );
-
-  const imgSizes = gridImageSizes.map(({maxWidth, imageWidth}) => {
-    return `${maxWidth && `(max-width: ${maxWidth}px )`} ${imageWidth}`;
-  });
+  const imgSrcSet = useMemo(() => {
+    return srcSetWidths.map(
+      (width) => buildSrcSetImageUrl(src, width)
+    )
+  }, [src]);
 
   const defaultImgSrc = buildSrcSetImageUrl(src, DEFAULT_IMAGE_WIDTH);
+
+  const onImageLoad = useCallback(() => {
+    setIsLoadingImage(false);
+  }, []);
 
   return (
     <>
@@ -66,12 +72,10 @@ const GridImage: React.FC<Props> = ({src, alt, placeholderColor}) => {
         sizes={imgSizes.join(', ')}
         src={defaultImgSrc}
         alt={alt}
-        onLoad={() => {
-          setIsLoadingImage(false);
-        }}
+        onLoad={onImageLoad}
       />
     </>
   )
 }
 
-export default GridImage;
+export default React.memo(GridImage);
