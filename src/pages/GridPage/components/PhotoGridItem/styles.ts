@@ -4,5 +4,5 @@ export const StyledPhotoGridItem = styled.div`
    position: relative; 
    margin-bottom: 1rem;
    break-inside: avoid;
-   cursor: pointer; 
+   cursor: pointer;
 `;

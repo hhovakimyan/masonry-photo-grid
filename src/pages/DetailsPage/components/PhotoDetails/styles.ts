@@ -3,14 +3,17 @@ import styled from 'styled-components';
 export const StyledPhotoContent = styled.div`
     display: flex;
     column-gap: 4rem;
+    justify-content: center;
+    
+    @media screen and (max-width: 1024px) {
+        flex-direction: column;
+        row-gap: 2rem;
+    }
 `;
 
 export const StyledImageWrapper = styled.div`
-    height: calc(100vh - 15rem);
-
-    img {
-       max-height: 100%; 
-    }
+    max-width: 500px;
+    min-width: 300px;
 `;
 
 export const StyledPhotoDetailsWrapper = styled.div`
@@ -26,6 +29,10 @@ export const StyledPhotoDetailsWrapper = styled.div`
         a {
             color: inherit;
         }
+    }
+
+    @media screen and (max-width: 1024px) {
+        margin-bottom: 2rem;
     }
 `
 

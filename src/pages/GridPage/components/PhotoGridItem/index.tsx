@@ -5,6 +5,7 @@ import ImagePlaceholder from 'components/ImagePlaceholder';
 import { calculateImageNewHeightWithRatio } from 'utils/images';
 import { useNavigate } from 'react-router-dom';
 import GridImage from 'components/GridImage';
+import { PHOTO_GRID_ITEM_WIDTH } from 'constants/layout';
 
 type Props = {
   id: string;
@@ -15,9 +16,7 @@ type Props = {
   height: number;
   photographer: string;
   pageUrl: string;
-}
-
-const PHOTO_GRID_ITEM_WIDTH = 400; // TODO revert this when implementing responsibility
+};
 
 const PhotoGridItem: React.FC<Props> = ({
   id,

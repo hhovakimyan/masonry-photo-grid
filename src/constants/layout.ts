@@ -1,0 +1,1 @@
+export const PHOTO_GRID_ITEM_WIDTH = 400;

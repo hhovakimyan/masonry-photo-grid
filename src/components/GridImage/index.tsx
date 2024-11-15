@@ -9,9 +9,6 @@ type GridImageSizeProps = {
 }
 
 const srcSetWidths: number[] = [
-  150,
-  300,
-  400,
   600,
   800,
   1200,

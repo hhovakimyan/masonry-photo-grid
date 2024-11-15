@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 
 export const StyledWrapper = styled.div`
-    max-width: 80vw;
+    max-width: 90vw;
     margin: 5rem auto 0;
+
+    @media screen and (max-width: 1024px) {
+        margin-top: 2rem;
+    }
 `;
 
 export const StyledLoadingWrapper = styled.div`
@@ -12,7 +16,7 @@ export const StyledLoadingWrapper = styled.div`
 
 export const StyledHeader = styled.div`
     display: flex;
-    justify-content: left;
+    justify-content: right;
     margin-bottom: 4rem;
 
     a {
